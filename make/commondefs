@@ -3,7 +3,8 @@
 #
 
 INCLDIR = $(ROOT)/usr/include
-TEXDIR = ../tex-macros
+PAPERSROOT = ..
+TEXDIR = $(PAPERSROOT)/tex-macros
 
 COMMONRULES = $(MAKEDIR)/commonrules
 
@@ -60,8 +61,12 @@ LLDFLAGS = $(LLDLIBS) $(LLDOPTS)
 SEP=:
 #SEP=\;         # for MikTeX+Cygwin # Deprecated: define this in $(MAKEDIR)/localdefs
 TEXINPUTS = .$(SEP)$(TEXDIR)$(SEP)
-LATEX = TEXINPUTS='$(TEXINPUTS)' latex --output-directory='$(BUILD)'
-PDFLATEX = TEXINPUTS='$(TEXINPUTS)' pdflatex --output-directory='$(BUILD)'
+LATEX = TEXINPUTS='$(TEXINPUTS)' $(LATEXEXEC) $(LATEXFLAGS)
+PDFLATEX = TEXINPUTS='$(TEXINPUTS)' $(PDFLATEXEXEC) $(PDFLATEXFLAGS)
+LATEXEXEC = latex
+PDFLATEXEXEC = pdflatex
+LATEXFLAGS = --output-directory='$(BUILD)' $(LLATEXFLAGS)
+PDFLATEXFLAGS = $(LATEXFLAGS) $(LPDFLATEXFLAGS)
 BIBTEX = bibtex
 
 # Directory for TeX's generated files.
