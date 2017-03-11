@@ -1,4 +1,4 @@
-papers-template 1.1
+papers-template 1.2
 -------------------
 
 To build version <version>:
@@ -21,6 +21,6 @@ document successfully. You can get it here:
 
     http://www.sigplan.org/sites/default/files/sigplanconf.cls
 
-Feedback to Andrew Myers <andru@cs.cornell.edu>
+Please send feedback to Andrew Myers <andru@cs.cornell.edu>
 
-August 2015
+November 2015

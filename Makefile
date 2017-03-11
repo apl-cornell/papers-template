@@ -18,12 +18,13 @@ TEXS = $(DOC).tex abstract.tex header.tex body.tex
 FIGS =
 
 # change to wherever commondefs is located
-MAKEDIR = make
+PAPERSROOT = .
+MAKEDIR = $(PAPERSROOT)/make
 
 include $(MAKEDIR)/commondefs
 
 # change to wherever you put paperversions.tex and the .sty files.
-TEXDIR = tex-macros
+TEXDIR = $(PAPERSROOT)/tex-macros
 
 default: $(TARGETS)
 
