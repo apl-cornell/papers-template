@@ -3,7 +3,7 @@
 #
 
 INCLDIR = $(ROOT)/usr/include
-PAPERSROOT = ..
+PAPERSROOT ?= ..
 TEXDIR = $(PAPERSROOT)/tex-macros
 
 COMMONRULES = $(MAKEDIR)/commonrules
