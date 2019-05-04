@@ -57,9 +57,12 @@ depend: .dependtime
 	@-cmp -s "$(BUILDD)$*.aux" "$(BUILDD)$*.auxprev";		      \
 	if test $$? = 1;						      \
 	then								      \
-	    sleep 1;							      \
 	    echo "==> Rebuilding $@";					      \
-	    touch "$(BUILDD)$*.stamp";					      \
+	    touch "$(BUILDD)$*.stamp";			                      \
+            while [ ! $(BUILDD)$*.stamp -nt $@ ]; do                          \
+              sleep 0.2;                                                      \
+	      touch "$(BUILDD)$*.stamp";			              \
+            done;                                                             \
 	    $(MAKE) $@;							      \
 	else								      \
 	    echo "==> No need to rebuild $@";				      \
@@ -76,9 +79,12 @@ depend: .dependtime
 	@-cmp -s "$(BUILDD)$*.aux" "$(BUILDD)$*.auxprev";		      \
 	if test $$? = 1;						      \
 	then								      \
-	    sleep 1;							      \
 	    echo "==> Rebuilding $@";					      \
-	    touch "$(BUILDD)$*.stamp";					      \
+	    touch "$(BUILDD)$*.stamp";			                      \
+            while [ ! $(BUILDD)$*.stamp -nt $@ ]; do                          \
+              sleep 0.2;                                                      \
+	      touch "$(BUILDD)$*.stamp";			              \
+            done;                                                             \
 	    $(MAKE) $@;							      \
 	else								      \
 	    echo "==> No need to rebuild $@";				      \
@@ -103,7 +109,10 @@ depend: .dependtime
 #    foo.dvi: foo.bbl
 # to use this rule properly.
 .tex.bbl:
-	@if [ -r $*.aux ]; then echo $(BIBTEX) $*; sh -c "$(BIBTEX) $* || echo"; else echo; fi
+	@if [ -r $*.aux ];						      \
+	    then echo $(BIBTEX) $*;					      \
+	         sh -c "$(BIBTEX) $* || echo";				      \
+	    else echo; fi
 
 .tex.stamp: # backward compatibility
 	touch $@
@@ -149,3 +158,7 @@ blindtr:
 	@DOC=blindtr MAKEFLAGS=e $(MAKE)
 web:
 	@DOC=web MAKEFLAGS=e $(MAKE)
+arxiv:
+	@DOC=arxiv MAKEFLAGS=e $(MAKE)
+arxiv-expanded.tex: arxiv
+	latexpand -o arxiv-expanded.tex arxiv.tex
