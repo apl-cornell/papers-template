@@ -2,6 +2,7 @@
 # See the manual page for "commondefs" for more information.
 #
 
+SHELL = /bin/sh
 INCLDIR = $(ROOT)/usr/include
 PAPERSROOT ?= ..
 TEXDIR = $(PAPERSROOT)/tex-macros
