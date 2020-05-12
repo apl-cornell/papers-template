@@ -1,8 +1,10 @@
 # Use 'make DOC' for appropriate values of DOC to build the corresponding document
 #
-# DOC defines the version of the document being generated.
-# Set DOC to one of draft, markup, local, submission, final, finaldraft, web, tr, trdraft, blindtr
-# See paperversions.tex for the explanation of how the versions differ.
+# DOC defines the version of the document being generated. It can be overridden
+# at the command line: make DOC=submission, etc.
+# The standard Makefile does this when you type "make submission", "make tr", etc.
+# See paperversions.tex for the explanation of how the paper versions differ.
+#
 DOC = draft
 
 # Name of the top-level TeX file sans .tex extension. Often the name of a conference, e.g. pldi18.
