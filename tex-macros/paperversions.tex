@@ -3,21 +3,30 @@
 % \documentclass. Use as follows:
 %
 %   \def\paperversion{draft}
+%   \def\anonymoussubmission{0} % optional. Value should be 0 or 1 if defined.
 %   \input{paperversions}
 %
 % In addition to 'draft', the following document versions are
-% supported: markup, local, submission, final, finaldraft, tr, trdraft
+% supported: markup, local, submission, final, finaldraft, web, tr,
+%            trdraft, blindtr
 %
-% markup: internal draft for paper markup
-% draft: internal draft with standard layout (comments shown, blinded if necessary)
-% local: version for local review (not blinded, warning re distribution)
+% markup:  internal draft for paper markup. Does not use submission
+%          formatting or show comments.
+% draft:   internal draft with standard layout (comments shown, blinded
+%          if necessary)
+% local:   version for local review (not blinded, warning re distribution)
 % submission: submission for review (blinded if necessary)
-% final: camera-ready (not blinded, no warning)
-% finaldraft: like final, but comments shown
+% final: camera-ready (not blinded, no distribution warning)
+% finaldraft: like final, but comments shown.
 % web: version to post on a website. Like final, but with page
 %      numbers and possibly information about where paper was published.
 % tr: technical report
 % trdraft: technical report with comments shown
+% blindtr: technical report suitable for anonymous submission as
+%     auxiliary material
+% arxiv: like the web version, but with support for constructing a
+%   single .tex file that combines all the source. latexpand can be
+%   be used to do this.
 %
 % The following \if conditions are defined appropriately depending on
 % which version is chosen:
@@ -27,16 +36,29 @@
 \newif\ifwarning\warningfalse
 \newif\ifshowcomments\showcommentsfalse
 \newif\ifblinded\blindedfalse
+\newif\ifshowlinenums\showlinenumsfalse
 \newif\ifreport\reportfalse
 \newif\ifcopyrightspace\copyrightspacefalse
 \newif\ifacknowledgments\acknowledgmentsfalse
 \newif\ifshowpagenumbers\showpagenumberstrue
 \newif\iffinalformat\finalformatfalse
 \newif\ifweb\webfalse
+\newif\ifexternalize\externalizetrue
 
-% The condition \ifblinded is defined by the existence of the file
-% .blinded, unless overridden by the document version chosen.
+% The condition \ifblinded is turned on if the file
+% .blinded exists or if \anonymoussubmission is defined to be 1, unless
+% overridden by the document version chosen. The local, final, tr,
+% trdraft, and web versions are not blinded.
 %
+\ifx\anonymoussubmission\undefined
+  \typeout{** Checking for .blinded file to see if venue has anonymous submission **}
+\else
+  \if\anonymoussubmission 1
+    \blindedtrue
+  \else
+    \blindedfalse
+  \fi
+\fi
 \IfFileExists{.blinded}{\blindedtrue}
 
 \def\xxmarkup{0}
@@ -49,10 +71,11 @@
 \def\xxfinaldraft{7}
 \def\xxweb{8}
 \def\xxblindtr{9}
+\def\xxarxiv{10}
 
 \ifx\paperversion\xxxxundefined
 \PackageError{paperversions}{*** No valid document version was specified.
-Macro paperversions must be be defined as one of (markup, draft,
+Macro paperversions must be defined as one of (markup, draft,
 local, submission, final, web, tr, trdraft)}
 \fi
 
@@ -64,9 +87,12 @@ local, submission, final, web, tr, trdraft)}
     \widemarginstrue
     \singlecolumntrue
     \warningtrue
+    \showlinenumstrue
     \sawversiontrue
+    \blindedfalse
 \or %draft
     \warningtrue
+    \showlinenumsfalse
     \showcommentstrue
     \sawversiontrue
 \or %local
@@ -75,8 +101,10 @@ local, submission, final, web, tr, trdraft)}
     \blindedfalse
     \sawversiontrue
     \acknowledgmentstrue
+    \showlinenumstrue
 \or %submission
     \sawversiontrue
+    \showlinenumstrue
 \or %final
     \blindedfalse
     \sawversiontrue
@@ -97,6 +125,8 @@ local, submission, final, web, tr, trdraft)}
     \showcommentstrue
     \sawversiontrue
     \reporttrue
+    \showlinenumstrue
+    \warningtrue
 \or %finaldraft
     \blindedfalse
     \showcommentstrue
@@ -104,6 +134,8 @@ local, submission, final, web, tr, trdraft)}
     \acknowledgmentstrue
     \sawversiontrue
     \finalformattrue
+    \showlinenumstrue
+    \warningtrue
 \or %web
     \blindedfalse
     \sawversiontrue
@@ -117,6 +149,14 @@ local, submission, final, web, tr, trdraft)}
     \acknowledgmentsfalse
     \sawversiontrue
     \reporttrue
+    \webtrue
+\or %arxiv
+    \blindedfalse
+    \sawversiontrue
+    \copyrightspacetrue
+    \acknowledgmentstrue
+    \finalformattrue
+    \externalizefalse
     \webtrue
 \fi
 
