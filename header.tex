@@ -1,11 +1,12 @@
-\ifreport \documentclass{acmart}
+\ifreport
+    \documentclass{acmart}
 \else
     \iffinalformat
         \ifweb
             \typeout{>>> web distribution version}
             \documentclass{sigplanconf}
             \permission{
-                Copyright \copyright\ ACM, 2015. This is the author's
+                Copyright \copyright\ ACM, 2023. This is the author's
                 version of the work.  It is posted here by permission
                 of ACM for your personal use.  Not for
                 redistribution.}
@@ -17,10 +18,9 @@
         \documentclass[acmlarge,preprint,nocopyrightspace]{acmart}
     \fi
 \fi
- 
+
 \usepackage{times, graphicx, color, eso-pic}
 \usepackage{amsmath, stmaryrd, utf8math, authcomments}
-
 \usepackage{hyperref}
 \hypersetup{
 	colorlinks,
@@ -31,8 +31,10 @@
 }
 
 \ifshowcomments
-\ifwarning
-\AtBeginDocument{
- \AddToShipoutPicture*{\put(306,690){\it\color{red}{\fbox{\large Draft---please do not distribute}}}}
-}
+ \ifwarning
+  \AtBeginDocument{
+    \AddToShipoutPicture*{\put(306,690)
+      {\it\color{red}{\fbox{\large Draft---please do not distribute}}}}
+  }
+ \fi
 \fi
