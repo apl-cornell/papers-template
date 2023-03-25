@@ -1,43 +1,68 @@
-# Use 'make DOC' for appropriate values of DOC to build the corresponding document
-#
-# DOC defines the version of the document being generated. It can be overridden
-# at the command line: make DOC=submission, etc.
-# The standard Makefile does this when you type "make submission", "make tr", etc.
-# See paperversions.tex for the explanation of how the paper versions differ.
-#
-DOC = draft
+DOC ?= draft
 
-# Name of the top-level TeX file sans .tex extension. Often the name of a conference, e.g. pldi18.
-CONF = paper
-
-TARGETS = $(DOC).pdf
-
-# TeX source files
-TEXS = $(DOC).tex abstract.tex header.tex body.tex
-
-# Included figures (usually .pdf files)
-FIGS =
-
-# Change PAPERSROOT to wherever the papers/ directory is located
 PAPERSROOT = .
 MAKEDIR = $(PAPERSROOT)/make
+BIBFILE = bibliography.bib
+TARGETS = make $(DOC).pdf
 
-include $(MAKEDIR)/commondefs
+sinclude $(MAKEDIR)/commondefs
 
-# Change to wherever you put paperversions.tex and the .sty files.
-TEXDIR = $(PAPERSROOT)/tex-macros
+export TEXINPUTS = acmart:syntax:sty:tex-macros:sections:
+
+# Included figures (usually .pdf files)
+FIGS = $(wildcard figures/*)
+CODEFIGS = $(wildcard figures/*.code)
+ACMART = acmart/acmart.cls acmart/ACM-Reference-Format.bst
+
+TEXDIRS = $(subst :, ,$(TEXINPUTS))
+SUBDIRTEXS = $(foreach DIR,$(TEXDIRS),$(wildcard $(DIR)/*.sty $(DIR)/*.tex))
+TEXS = $(DOC).tex paper.tex header.tex body.tex $(wildcard *.sty) $(SUBDIRTEXS) \
+	$(CODEFIGS:.code=.code.tex) \
+	$(ACMART)
 
 default: $(TARGETS)
+.PHONY: default
 
-BIBFILE = dummy.bib
+SUBMODULES = make acmart
+# add more submodules here, e.g., tex-macros, bibtex
 
-$(DOC).pdf: $(TEXS) $(FIGS) $(DOC).stamp $(DOC).bbl $(BIBFILE)
+$(DOC).pdf: $(TEXS) $(FIGS) $(DOC).stamp $(SUBMODULES) $(DOC).bbl $(BIBFILE)
 $(DOC).bbl: $(BIBFILE) $(DOC).stamp
 
-$(DOC).tex: $(CONF).tex
-	sed s/DOC/$(DOC)/ < $(CONF).tex > $(DOC).tex
-   
-LDIRT = local.tex markup.tex draft.tex submission.tex final.tex finaldraft.tex tr.tex trdraft.tex blindtr.tex web.tex
-GENERATED += local.* markup.* draft.* submission.* final.* finaldraft.* tr.* trdraft.* blindtr.* web.*
+$(DOC).tex:
+	printf '\\newcommand{\\paperversion}{${DOC}}\n\\input{paper}' > $@
+
+$(DOC)-archive.tex: $(DOC).pdf
+	latexpand $(DOC).tex > $@
+
+$(DOC)-archive.zip: $(ACMART) $(DOC)-archive.tex
+	zip $@ $^ $(DOC).bbl
+
+$(SUBMODULES):
+	$(MAKE) submodules
+	@echo "Run make again!"
+
+submodules:
+	git submodule update --init --recursive
+.PHONY: submodules
+
+$(ACMART): acmart
+	$(MAKE) -C acmart $(notdir $@)
+
+debug:
+	@echo "TARGETS = $(TARGETS)"
+	@echo "TEXS = $(TEXS)"
+	@echo "FIGS = $(FIGS)"
+.PHONY: debug
+
+figures/%.code.tex: figures/%.code texify-code.pl
+	perl texify-code.pl $< > $@
+
+LDIRT = local.* draft.* submission.* final.*                         \
+	finaldraft.* tr.* trdraft.* blindtr.* web.*                  \
+	*-archive.*                                                  \
+	figures/*.code.tex *.fdb_latexmk *.fls *.cut *.up*
 
 include $(COMMONRULES)
+
+print-%  : ; @echo $* = $($*)

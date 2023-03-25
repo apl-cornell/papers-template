@@ -1,0 +1,5 @@
+[submodule "make"]
+	url = git@github.com:apl-cornell/make
+[submodule "acmart"]
+	path = acmart
+	url = https://github.com/borisveytsman/acmart
